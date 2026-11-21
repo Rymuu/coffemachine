@@ -1,9 +1,11 @@
 package org.formation.service;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.formation.dto.CoffeeCreateDto;
 import org.formation.dto.CoffeeDto;
+import org.formation.dto.CoffeeUpdateDto;
 import org.formation.entity.Coffee;
 import org.formation.mapper.CoffeeMapper;
 import org.formation.repository.CoffeeRepository;
@@ -43,6 +45,15 @@ public class CoffeeServiceImpl implements CoffeeService {
         Coffee entity = mapper.toEntity(dto);
         Coffee saved = repository.save(entity);
         return mapper.toDto(saved);
+    }
+
+    @Transactional
+    @Override
+    public Optional<CoffeeDto> update(Long id, CoffeeUpdateDto dto) {
+        return repository.findById(id).map(existing -> {
+            mapper.updateEntity(existing, dto);
+            return mapper.toDto(existing);
+        });
     }
 
 }
